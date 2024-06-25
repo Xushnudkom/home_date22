@@ -7,16 +7,9 @@ import { useSpring, animated } from "@react-spring/web";
 import { forwardRef, cloneElement, useState } from "react";
 import { Button, TextField } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+
 const Fade = forwardRef(function Fade(props, ref) {
-  const {
-    children,
-    in: open,
-    onClick,
-    onEnter,
-    onExited,
-    ownerState,
-    ...other
-  } = props;
+  const { children, in: open, onEnter, onExited, ...other } = props;
   const style = useSpring({
     from: { opacity: 0 },
     to: { opacity: open ? 1 : 0 },
@@ -34,7 +27,7 @@ const Fade = forwardRef(function Fade(props, ref) {
 
   return (
     <animated.div ref={ref} style={style} {...other}>
-      {cloneElement(children, { onClick })}
+      {cloneElement(children)}
     </animated.div>
   );
 });
@@ -42,10 +35,8 @@ const Fade = forwardRef(function Fade(props, ref) {
 Fade.propTypes = {
   children: PropTypes.element.isRequired,
   in: PropTypes.bool,
-  onClick: PropTypes.any,
   onEnter: PropTypes.func,
   onExited: PropTypes.func,
-  ownerState: PropTypes.any,
 };
 
 const style = {
@@ -63,11 +54,13 @@ const style = {
 export default function Index({ open, handleClose }) {
   const [code, setCode] = useState("");
   const navigate = useNavigate();
+
   const handleSubmit = (e) => {
     e.preventDefault();
     navigate("/");
     console.log(code);
   };
+
   return (
     <div>
       <Modal
@@ -93,11 +86,12 @@ export default function Index({ open, handleClose }) {
             >
               Enter Verification Code
             </Typography>
-            <form onClick={handleSubmit} className="flex flex-col gap-5">
+            <form onSubmit={handleSubmit} className="flex flex-col gap-5">
               <TextField
                 fullWidth
                 type="text"
                 onChange={(e) => setCode(e.target.value)}
+                value={code}
                 label="Code"
                 id="code"
               />
@@ -111,3 +105,9 @@ export default function Index({ open, handleClose }) {
     </div>
   );
 }
+
+Index.propTypes = {
+  open: PropTypes.bool.isRequired,
+  handleClose: PropTypes.func.isRequired,
+};
+
